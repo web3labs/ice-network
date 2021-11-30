@@ -11,13 +11,14 @@ Instal Rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
-Nightly build (required for frontier)
+Nightly build and toolchain setup
 
 ```
-rustup default nightly
+rustup default stable
+rustup update
+rustup update nightly
+rustup target add wasm32-unknown-unknown --toolchain nightly
 ```
-
-Wasm toolchain
 
 Depending on the OS, Wasm toolchain might require manual installation. 
 
