@@ -1,10 +1,10 @@
 use fp_evm::LinearCostPrecompile;
 use crate::{mock::*, Error};
-use frame_support::{assert_noop, assert_ok, debug};
+use frame_support::{assert_noop, assert_ok};
 //use pallet_evm_precompile_sha3fips::Sha3FIPS256;
 //use fp_evm::Precompile;
 use pallet_evm_precompile_sha3fips::Sha3FIPS256;
-use pallet_evm_precompile_simple::{ECRecover, ECRecoverPublicKey};
+use pallet_evm_precompile_simple::{ECRecoverPublicKey};
 
 #[test]
 fn it_works_for_default_value() {
@@ -63,4 +63,17 @@ fn test_recover_public_key() -> std::result::Result<(), () > {
 			panic!("Test not expected to fail: {:?}", e);
 		}
 	}
+}
+
+
+#[test]
+fn test_verify_recovered_address_from_signature() {
+	new_test_ext().execute_with(|| {
+		// message with signature
+		let signed_data = sp_core::bytes::from_hex("0xc5d6c454e4d7a8e8a654f5ef96e8efe41d21a65b171b298925414aa3dc061e3700000000000000000000000000000000000000000000000000000000000000004011de30c04302a2352400df3d1459d6d8799580dceb259f45db1d99243a8d0c64f548b7776cb93e37579b830fc3efce41e12e0958cda9f8c5fcad682c610795").unwrap();
+		// address: hx57b8365292c115d3b72d948272cc4d788fa91f64 => 0x57b8365292c115d3b72d948272cc4d788fa91f64
+		let address = sp_core::bytes::from_hex("0x57b8365292c115d3b72d948272cc4d788fa91f64").unwrap();
+		//expect the method not to fail when recovering the address
+		assert_ok!(TemplateModule::ensure_signed(Origin::signed(1), signed_data, address));
+	});
 }

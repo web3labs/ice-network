@@ -4,8 +4,6 @@
 /// Learn more about FRAME and the core library of Substrate FRAME pallets:
 /// <https://docs.substrate.io/v3/runtime/frame>
 pub use pallet::*;
-use pallet_evm_precompile_sha3fips::Sha3FIPS256;
-use pallet_evm_precompile_simple::{ECRecover, ECRecoverPublicKey, Identity, Ripemd160, Sha256};
 
 #[cfg(test)]
 mod mock;
@@ -19,6 +17,10 @@ mod benchmarking;
 pub mod pallet {
 	use frame_support::{dispatch::DispatchResult, pallet_prelude::*};
 	use frame_system::pallet_prelude::*;
+	use fp_evm::LinearCostPrecompile;
+	use pallet_evm_precompile_sha3fips::Sha3FIPS256;
+	use pallet_evm_precompile_simple::{ECRecoverPublicKey};
+	use sp_std::vec::Vec;
 
 	/// Configure the pallet by specifying the parameters and types on which it depends.
 	#[pallet::config]
@@ -63,6 +65,31 @@ pub mod pallet {
 	// Dispatchable functions must be annotated with a weight and must return a DispatchResult.
 	#[pallet::call]
 	impl<T: Config> Pallet<T> {
+
+		//this method recovers the public key from signeddata & compares it with input address to check the validity
+		#[pallet::weight(10_000)]
+		pub fn ensure_signed(
+			_origin: OriginFor<T>,
+			signed_data: Vec<u8>,
+			address: Vec<u8>,
+		) -> DispatchResult {
+			let cost: u64 = 1;
+			match <ECRecoverPublicKey as LinearCostPrecompile>::execute(&signed_data, cost) {
+				Ok((_, out)) => match Sha3FIPS256::execute(&out, cost) {
+					Ok((_, hashout)) => {
+						assert_eq!(&hashout.as_slice()[&hashout.len() - 20..], &address);
+						Ok(())
+					}
+					Err(e) => {
+						panic!("Test not expected to fail: {:?}", e);
+					}
+				},
+				Err(e) => {
+					panic!("Test not expected to fail: {:?}", e);
+				}
+			}
+		}
+		
 		/// An example dispatchable that takes a singles value as a parameter, writes the value to
 		/// storage and emits an event. This function must be dispatched by a signed extrinsic.
 		#[pallet::weight(10_000 + T::DbWeight::get().writes(1))]
