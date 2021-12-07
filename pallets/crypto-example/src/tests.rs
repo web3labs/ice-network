@@ -49,7 +49,7 @@ fn test_sha3_256() -> std::result::Result<(), ()> {
 fn test_recover_public_key() -> std::result::Result<(), () > {
 	let input = sp_core::bytes::from_hex("0xc5d6c454e4d7a8e8a654f5ef96e8efe41d21a65b171b298925414aa3dc061e3700000000000000000000000000000000000000000000000000000000000000004011de30c04302a2352400df3d1459d6d8799580dceb259f45db1d99243a8d0c64f548b7776cb93e37579b830fc3efce41e12e0958cda9f8c5fcad682c610795").unwrap();
 	//Test data is from goloop crypto_test https://github.com/icon-project/goloop/blob/d4569e3c0e5f38489a8400b3e7dc7a7c01da2172/common/crypto/crypto_test.go
-	//Note: 0x4 prefix is truncated
+	//Note: 0x4 decompressed/compressed prefix flag is omitted
 	let expected= sp_core::bytes::from_hex("0x48250ebe88d77e0a12bcf530fe6a2cf1ac176945638d309b840d631940c93b78c2bd6d16f227a8877e3f1604cd75b9c5a8ab0cac95174a8a0a0f8ea9e4c10bca").unwrap();
 	let cost: u64 = 1;
 
@@ -70,8 +70,10 @@ fn test_recover_public_key() -> std::result::Result<(), () > {
 fn test_verify_recovered_address_from_signature() {
 	new_test_ext().execute_with(|| {
 		// message with signature
+		//Test data is from goloop crypto_test https://github.com/icon-project/goloop/blob/d4569e3c0e5f38489a8400b3e7dc7a7c01da2172/common/crypto/crypto_test.go
+		//Note: 0x4 decompressed/compressed prefix flag is omitted
 		let signed_data = sp_core::bytes::from_hex("0xc5d6c454e4d7a8e8a654f5ef96e8efe41d21a65b171b298925414aa3dc061e3700000000000000000000000000000000000000000000000000000000000000004011de30c04302a2352400df3d1459d6d8799580dceb259f45db1d99243a8d0c64f548b7776cb93e37579b830fc3efce41e12e0958cda9f8c5fcad682c610795").unwrap();
-		// address: hx57b8365292c115d3b72d948272cc4d788fa91f64 => 0x57b8365292c115d3b72d948272cc4d788fa91f64
+		// address: hx57b8365292c115d3b72d948272cc4d788fa91f64 => 0x57b8365292c115d3b72d948272cc4d788fa91f64 (hx is replaced with 0x)
 		let address = sp_core::bytes::from_hex("0x57b8365292c115d3b72d948272cc4d788fa91f64").unwrap();
 		//expect the method not to fail when recovering the address
 		assert_ok!(TemplateModule::ensure_signed(Origin::signed(1), signed_data, address));
