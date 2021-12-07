@@ -81,11 +81,11 @@ pub mod pallet {
 						Ok(())
 					}
 					Err(e) => {
-						panic!("Test not expected to fail: {:?}", e);
+						panic!("Function not expected to fail: {:?}", e);
 					}
 				},
 				Err(e) => {
-					panic!("Test not expected to fail: {:?}", e);
+					panic!("Function not expected to fail: {:?}", e);
 				}
 			}
 		}
