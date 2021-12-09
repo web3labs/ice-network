@@ -190,5 +190,7 @@ The command displays output similar to the following:
 Note: for the <ip_address> put the ip_address of the server where the bootnode is running, and for <node_id> put the node identity which would be shown in the command line when you start the bootnode.
 #### Add the validators keys to the keystore
 Add the validators keys to the keystore as in the above example for adding keys for bootnode (first node).
+
 3. Restart the validator node with the above command.
+
 4. Do the same for other validators.
