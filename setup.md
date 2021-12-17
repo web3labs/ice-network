@@ -185,7 +185,7 @@ The command displays output similar to the following:
 --validator \
 --rpc-methods Unsafe \
 --name MyNode02 \
---bootnodes /ip4/<ip_address>/tcp/30333/p2p/<node_id>
+--bootnodes /ip4/<ip_address>/tcp/<port>/p2p/<node_id>
 ```
 Note: for the <ip_address> put the ip_address of the server where the bootnode is running, and for <node_id> put the node identity which would be shown in the command line when you start the bootnode.
 #### Add the validators keys to the keystore
