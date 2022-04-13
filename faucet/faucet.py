@@ -58,7 +58,7 @@ async def nine_nine(ctx, arg):
         if validAddress:
             substrate = SubstrateInterface(
                 url=node_rpc,
-                ss58_format=42,
+                ss58_format=15253,
                 type_registry_preset='substrate-node-template',
                 type_registry=custom_type_registry
             )
